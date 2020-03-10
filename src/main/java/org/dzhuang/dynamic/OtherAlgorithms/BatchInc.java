@@ -67,8 +67,8 @@ public class BatchInc {
 			Louvain louvain = new Louvain().runAndExport(g, g0.n2c, nodeDict, comMap, commStruc, 0.001);  // run the Louvain algorithm on the network
 			
 			g0.updateAndWriteCommunity(commStruc, commPath);
-			modList.add(new Double(Parameter.df.format(louvain.modularity())));
-			
+			modList.add(Double.valueOf(louvain.modularity()));
+//			modList.add(new Double(Parameter.df.format(louvain.modularity())));
 			comList.add(g0.commSizeMap.size());
 			long t2 = System.currentTimeMillis();
 			long time = t2-t1+t0_2-t0_1;

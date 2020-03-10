@@ -5,18 +5,54 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.dzhuang.dynamic.DynaMo.Network;
+import org.dzhuang.dynamic.Runnable.runALL;
 import org.dzhuang.dynamic.util.FileUtil;
 
+import py4j.GatewayServer;
+import java.net.InetAddress;
 
 public class toDynaMo {
 	public static void main(String[] args) throws IOException, ClassNotFoundException {	
+		
+		GatewayServer server2 = new GatewayServer.GatewayServerBuilder()
+
+				.javaPort(10003)
+
+				.javaAddress(InetAddress.getByName("127.0.0.1"))
+
+				.callbackClient(10004, InetAddress.getByName("127.0.0.1"))
+
+				.build();
+		
+		server2.start();
 //		run("Cit-HepPh", 31);
 //		run("Cit-HepTh", 25);
+//		run("5x5_v1", 2);
+		
+	//	run("20x20_v2", 20);
+	//	run("30x30_v2", 25);
+	//	run("8x8_v1", 7);
+	//	run("10subat_30x30", 10);
+	
+		
+		/* runALL app = new runALL();
+		 // app is now the gateway.entry_point
+		 GatewayServer server = new GatewayServer(app,2002);
+		 server.start();*/
+		    
+	
+	//	run("16x16_v1",15);
+	/*	preprocessing("16x16_v1",1);
+		preprocessing("16x16_v1",2);
+		preprocessing("16x16_v1",3);
+	 */
+		
 //		run("dblp_coauthorship", 31);
 //		run("facebook", 28);
 //		run("flickr", 24);
@@ -78,6 +114,54 @@ public class toDynaMo {
 			bufferedReader.close();
 			pw.close();
 		}
+	}
+	
+
+	public static void preprocessing(String dataSet, int graphNo) throws IOException{
+		FileUtil.deleteDir(new File("data/"+dataSet+"/inct"));
+		(new File("data/"+dataSet+"/inct")).mkdir();
+		FileUtil.deleteDir(new File("data/"+dataSet+"/ntwk2"));
+		(new File("data/"+dataSet+"/ntwk2")).mkdir();
+		
+	//	for(int i=1;i<=size;i++) {
+			Network network = readInputFile("data/"+dataSet+"/ntwk/"+graphNo);
+			network.save("data/"+dataSet+"/ntwk2/"+graphNo);
+	//	}
+		if(graphNo >= 2) {	
+	//	for(int i=2;i<=size;i++){
+			HashSet<String> oldNetwork=new HashSet<String>();
+			HashSet<String> newNetwork=new HashSet<String>();
+			BufferedReader bufferedReader = new BufferedReader(new FileReader("data/"+dataSet+"/ntwk/"+(graphNo)));
+			String line="";
+			while ((line=bufferedReader.readLine()) != null) {
+				newNetwork.add(line);
+			}
+			bufferedReader.close();
+			
+			int cnt=0;
+			PrintWriter pw=new PrintWriter("data/"+dataSet+"/inct/"+graphNo);
+			bufferedReader = new BufferedReader(new FileReader("data/"+dataSet+"/ntwk/"+(graphNo-1)));
+			line="";
+			while ((line=bufferedReader.readLine()) != null) {
+				oldNetwork.add(line);
+				if(!newNetwork.contains(line))
+					pw.println(cnt+"\t"+"-"+"\t"+line);				
+				cnt++;
+			}
+			bufferedReader.close();
+			
+			cnt=0;
+			bufferedReader = new BufferedReader(new FileReader("data/"+dataSet+"/ntwk/"+(graphNo)));
+			line="";
+			while ((line=bufferedReader.readLine()) != null) {				
+				if(!oldNetwork.contains(line))		
+					pw.println(cnt+"\t"+"+"+"\t"+line);
+				cnt++;
+			}
+			bufferedReader.close();
+			pw.close();
+		}
+		
 	}
 	
 	public static void run(String dataSet, int size) throws IOException{

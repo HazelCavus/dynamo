@@ -177,7 +177,7 @@ public class GreMod{
 			br.close();
 			
 			
-			modList.add(new Double(Parameter.df.format(comm.modularity())));
+			modList.add(Double.valueOf(comm.modularity()));
 			
 			commList.add(comm.communities());
 			comm.exportCommunity(FileUtil.extendFileName(commOutPath, "_" + (i+1)));
