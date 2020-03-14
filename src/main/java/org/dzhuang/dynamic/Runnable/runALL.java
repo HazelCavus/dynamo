@@ -22,6 +22,7 @@ import org.dzhuang.dynamic.OtherAlgorithms.GreMod;
 import org.dzhuang.dynamic.OtherAlgorithms.LearnIncLr;
 import org.dzhuang.dynamic.OtherAlgorithms.LearnIncSvm;
 import org.dzhuang.dynamic.OtherAlgorithms.QCA;
+import org.dzhuang.dynamic.preprocessing.toDynaMo;
 import org.dzhuang.dynamic.util.FileUtil;
 import org.dzhuang.dynamic.util.Parameter;
 
@@ -55,36 +56,14 @@ public class runALL {
 	static double modularity_temporary;
 	static PrintWriter pw;
 	
-	public static void main(String args[]) throws Exception{
-		try {
-
-			GatewayServer server1 = new GatewayServer.GatewayServerBuilder()
-
-					.javaPort(10001)
-
-					.javaAddress(InetAddress.getByName("127.0.0.1"))
-
-					.callbackClient(10002, InetAddress.getByName("127.0.0.1"))
-
-					.build();
-
-			
-
-			
-			server1.start();
+	public static void main(final String args[]) throws Exception{
 		
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
-		}
-
-	
-	/*	 runALL app = new runALL();
-		    // app is now the gateway.entry_point
-		    GatewayServer server1 = new GatewayServer(app,2001);
-		    server1.start();*/
-		    
+		runALL app = new runALL();
+		// app is now the gateway.entry_point
+		GatewayServer server1 = new GatewayServer(app);
+		server1.start(); 
+		
+		
 	//	for(int i=1;i<=1;i++) {	//1000 idi ben 2 yaptım		
 		/*	runLouvain("Cit-HepTh", 25, i);
 			runDynamicModularity("Cit-HepTh", 25, i);
@@ -156,16 +135,15 @@ public class runALL {
 	//	}
 	}
 	
-/*	public static int printt(String,int currentGraph, int noOfGraphs) {
-		while(currentGraph <= noOfGraphs) {
-			
-		}
-		System.out.println("prinnntt");
 	
-		return currentGraph;
-	}*/
+	//run toDynaMo for preprocessing
+	public void runPreprocessing(final String dataSet, final int graphNo) throws IOException {
+		toDynaMo.preprocessing(dataSet, graphNo);
+	}
 	
+	//Louvain for initial communities
 	public static void runDynamicModularity1(String dataSet, int nbatch, int itrn) throws IOException, ClassNotFoundException {
+		System.out.println("runDynamicModularity1");
 		/*String*/ DyNet="data/"+dataSet+"/ntwk2/";
 		/*String*/ intNet="data/"+dataSet+"/inct/";
 		/**********************************************************************************/
@@ -205,7 +183,10 @@ public class runALL {
         /*PrintWriter*/ pw=new PrintWriter(dataSet+"_modularity_runDynamicModularity_"+itrn);		
 	}
 	
+	//DynaMo for latter communities
 	public static void DynaMo(String dataSet, int nbatch, int itrn) throws IOException, ClassNotFoundException {
+			DyNet="data/"+dataSet+"/ntwk2/";
+			intNet="data/"+dataSet+"/inct/";
 		// DynaMo
      //   for(int ibatch=2;ibatch<=nbatch;ibatch++){
 			int ibatch = nbatch; 
@@ -221,7 +202,8 @@ public class runALL {
         	Int2IntOpenHashMap nodeAdded_adjacentNode2=new Int2IntOpenHashMap();
         	Int2DoubleOpenHashMap nodeAdded2_edgeWeight2=new Int2DoubleOpenHashMap();
         	Int2BooleanOpenHashMap nodeAdded2_flag2=new Int2BooleanOpenHashMap();
-            /**********************************************************************************/            
+            /**********************************************************************************/ 
+        	System.out.println(intNet + ibatch);
             BufferedReader bufferedReader = new BufferedReader(new FileReader(intNet+ibatch));
             String line="";  
             long t1=System.currentTimeMillis();

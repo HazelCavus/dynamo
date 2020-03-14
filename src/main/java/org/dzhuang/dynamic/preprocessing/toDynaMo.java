@@ -20,20 +20,9 @@ import java.net.InetAddress;
 public class toDynaMo {
 	public static void main(String[] args) throws IOException, ClassNotFoundException {	
 		
-		GatewayServer server2 = new GatewayServer.GatewayServerBuilder()
-
-				.javaPort(10003)
-
-				.javaAddress(InetAddress.getByName("127.0.0.1"))
-
-				.callbackClient(10004, InetAddress.getByName("127.0.0.1"))
-
-				.build();
-		
-		server2.start();
 //		run("Cit-HepPh", 31);
 //		run("Cit-HepTh", 25);
-//		run("5x5_v1", 2);
+	//	preprocessing("5x5", 2);
 		
 	//	run("20x20_v2", 20);
 	//	run("30x30_v2", 25);
@@ -116,13 +105,14 @@ public class toDynaMo {
 		}
 	}
 	
-
+	//for preprocessing
 	public static void preprocessing(String dataSet, int graphNo) throws IOException{
-		FileUtil.deleteDir(new File("data/"+dataSet+"/inct"));
-		(new File("data/"+dataSet+"/inct")).mkdir();
-		FileUtil.deleteDir(new File("data/"+dataSet+"/ntwk2"));
-		(new File("data/"+dataSet+"/ntwk2")).mkdir();
-		
+		if(graphNo == 1) {		
+			FileUtil.deleteDir(new File("data/"+dataSet+"/inct"));
+			(new File("data/"+dataSet+"/inct")).mkdir();
+			FileUtil.deleteDir(new File("data/"+dataSet+"/ntwk2"));
+			(new File("data/"+dataSet+"/ntwk2")).mkdir();
+		}
 	//	for(int i=1;i<=size;i++) {
 			Network network = readInputFile("data/"+dataSet+"/ntwk/"+graphNo);
 			network.save("data/"+dataSet+"/ntwk2/"+graphNo);
@@ -161,7 +151,7 @@ public class toDynaMo {
 			bufferedReader.close();
 			pw.close();
 		}
-		
+	
 	}
 	
 	public static void run(String dataSet, int size) throws IOException{
